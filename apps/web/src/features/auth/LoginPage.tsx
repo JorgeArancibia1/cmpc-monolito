@@ -1,5 +1,6 @@
 import { loginSchema, type LoginInput } from '@cmpc/contracts';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { BookOpen } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -36,7 +37,9 @@ export function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-slate-100 p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>CMPC Libros</CardTitle>
+          <CardTitle className="flex items-center gap-2 font-bold text-brand-700">
+            <BookOpen className="h-5 w-5" /> CMPC Libros
+          </CardTitle>
           <p className="mt-1 text-sm text-slate-500">Inicia sesión para gestionar el catálogo</p>
         </CardHeader>
         <CardContent>
