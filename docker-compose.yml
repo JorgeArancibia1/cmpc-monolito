@@ -1,0 +1,71 @@
+# Stack completo local: PostgreSQL + API NestJS + Frontend Nginx.
+# Uso: docker compose up --build
+#   Frontend → http://localhost:8082
+#   API/Swagger → http://localhost:3002/api/docs
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: cmpc-db
+    environment:
+      POSTGRES_USER: cmpc
+      POSTGRES_PASSWORD: cmpc_secret
+      POSTGRES_DB: cmpc_libros
+    ports:
+      - '5435:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U cmpc -d cmpc_libros']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: cmpc-api
+    environment:
+      NODE_ENV: production
+      # Solo para el stack local de demo: siembra datos de ejemplo. En producción NO se define.
+      SEED_ON_START: 'true'
+      API_PORT: 3000
+      DATABASE_URL: postgresql://cmpc:cmpc_secret@db:5432/cmpc_libros?schema=public
+      DIRECT_URL: postgresql://cmpc:cmpc_secret@db:5432/cmpc_libros?schema=public
+      # Secretos SOLO para el stack local. En producción se inyectan por el gestor de secretos
+      # de la plataforma (Render usa generateValue), NUNCA desde este archivo.
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-local-dev-only-access-secret-min-32-chars-aaaa}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-local-dev-only-refresh-secret-min-32-chars-bbbb}
+      JWT_ACCESS_TTL: 15m
+      JWT_REFRESH_TTL: 7d
+      CORS_ORIGIN: http://localhost:8082
+      CLOUDINARY_CLOUD_NAME: ''
+      CLOUDINARY_API_KEY: ''
+      CLOUDINARY_API_SECRET: ''
+    ports:
+      - '3002:3000'
+    # Endurecimiento: sin escalada de privilegios y sin capacidades de Linux innecesarias.
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_API_URL: http://localhost:3002
+    container_name: cmpc-web
+    ports:
+      - '8082:80'
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
