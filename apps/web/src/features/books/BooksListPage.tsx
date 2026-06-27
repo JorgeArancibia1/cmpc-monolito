@@ -156,7 +156,7 @@ export function BooksListPage() {
                   </TD>
                   <TD className="text-slate-600">{book.authors.map((a) => a.name).join(', ')}</TD>
                   <TD className="text-slate-600">{book.genre.name}</TD>
-                  <TD>{formatPrice(book.price)}</TD>
+                  <TD>{formatPrice(book.price, book.currency)}</TD>
                   <TD>{book.stock}</TD>
                   <TD>{book.available ? <Badge variant="success">Disponible</Badge> : <Badge variant="muted">Agotado</Badge>}</TD>
                   <TD className="text-right">

@@ -7,7 +7,8 @@ describe('toBook', () => {
     title: 'T',
     isbn: null,
     description: null,
-    price: 199.9,
+    price: 19990,
+    currency: 'CLP',
     publishedYear: null,
     imageUrl: null,
     createdAt: new Date('2024-01-01'),
@@ -20,7 +21,8 @@ describe('toBook', () => {
   it('deriva available=true cuando hay stock', () => {
     const view = toBook({ ...base, stock: 5 } as unknown as BookWithRelations);
     expect(view.available).toBe(true);
-    expect(view.price).toBe(199.9);
+    expect(view.price).toBe(19990);
+    expect(view.currency).toBe('CLP');
     expect(view.authors).toEqual([{ id: 'a1', name: 'A1' }]);
   });
 

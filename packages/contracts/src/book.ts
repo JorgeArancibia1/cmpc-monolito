@@ -27,8 +27,10 @@ export const bookFormSchema = z.object({
     .max(255, 'El título es demasiado largo'),
   isbn: isbnField,
   description: optional(z.string().trim().max(2000, 'La descripción es demasiado larga')),
+  // Precio bruto (IVA incluido) en pesos enteros — el CLP no tiene centavos.
   price: z.coerce
     .number({ error: 'Ingresa un precio válido' })
+    .int('El precio debe ser un número entero')
     .min(0, 'El precio no puede ser negativo')
     .max(99_999_999, 'El precio es demasiado alto'),
   stock: z.coerce
@@ -79,7 +81,10 @@ export interface Book {
   title: string;
   isbn: string | null;
   description: string | null;
+  /** Precio bruto (IVA incluido) en la unidad mínima de la divisa. */
   price: number;
+  /** Divisa del precio (ISO-4217). Por defecto CLP. */
+  currency: string;
   stock: number;
   available: boolean;
   publishedYear: number | null;

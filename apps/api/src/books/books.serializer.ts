@@ -17,7 +17,8 @@ export function toBook(book: BookWithRelations): Book {
     title: book.title,
     isbn: book.isbn,
     description: book.description,
-    price: Number(book.price),
+    price: book.price,
+    currency: book.currency,
     stock: book.stock,
     available: book.stock > 0, // disponibilidad derivada del stock
     publishedYear: book.publishedYear,

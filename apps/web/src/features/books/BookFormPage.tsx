@@ -122,8 +122,8 @@ export function BookFormPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <Label htmlFor="price">Precio</Label>
-              <Input id="price" type="number" step="0.01" {...register('price')} />
+              <Label htmlFor="price">Precio (CLP)</Label>
+              <Input id="price" type="number" step="1" min="0" {...register('price')} />
               {errors.price && <p className="text-xs text-red-600">{errors.price.message}</p>}
             </div>
             <div className="space-y-1">

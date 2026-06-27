@@ -37,7 +37,7 @@ describe('BookFormPage', () => {
     renderWithProviders(createUi, { route: '/books/new' });
     await screen.findByText('Nuevo libro');
     await user.type(screen.getByLabelText('Título'), 'Mi libro');
-    await user.type(screen.getByLabelText('Precio'), '5000');
+    await user.type(screen.getByLabelText('Precio (CLP)'), '5000');
     await user.type(screen.getByLabelText('Stock'), '3');
     await user.selectOptions(screen.getByLabelText('Editorial'), IDS.p1);
     await user.selectOptions(screen.getByLabelText('Género'), IDS.g1);
@@ -60,7 +60,7 @@ describe('BookFormPage', () => {
     renderWithProviders(createUi, { route: '/books/new' });
     await screen.findByText('Nuevo libro');
     await user.type(screen.getByLabelText('Título'), 'Mi libro');
-    await user.type(screen.getByLabelText('Precio'), '5000');
+    await user.type(screen.getByLabelText('Precio (CLP)'), '5000');
     await user.type(screen.getByLabelText('Stock'), '3');
     await user.selectOptions(screen.getByLabelText('Editorial'), IDS.p1);
     await user.selectOptions(screen.getByLabelText('Género'), IDS.g1);

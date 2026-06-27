@@ -46,7 +46,7 @@ export function BookDetailPage() {
             <dt className="text-slate-500">Género</dt>
             <dd>{book.genre.name}</dd>
             <dt className="text-slate-500">Precio</dt>
-            <dd>{formatPrice(book.price)}</dd>
+            <dd>{formatPrice(book.price, book.currency)}</dd>
             <dt className="text-slate-500">Stock</dt>
             <dd>{book.stock}</dd>
             <dt className="text-slate-500">ISBN</dt>
