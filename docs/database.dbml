@@ -7,10 +7,27 @@ Table users {
   password_hash varchar [not null]
   name varchar [not null]
   role varchar [not null, note: 'ADMIN | USER']
-  refresh_hash varchar
   created_at timestamp
   updated_at timestamp
   deleted_at timestamp
+}
+
+// Sesiones de refresh: rotación con detección de reuso y revocación de familia (multi-dispositivo).
+Table sessions {
+  id uuid [pk]
+  user_id uuid [not null, ref: > users.id]
+  family_id uuid [not null, note: 'agrupa los tokens rotados de un mismo login']
+  token_hash varchar [not null]
+  user_agent varchar
+  ip varchar
+  expires_at timestamp [not null]
+  revoked_at timestamp
+  replaced_by_id uuid [note: 'sesión que la reemplazó al rotar']
+  created_at timestamp
+  Indexes {
+    user_id
+    family_id
+  }
 }
 
 Table authors {
@@ -47,7 +64,8 @@ Table books {
   title varchar [not null]
   isbn varchar [unique]
   description text
-  price decimal [note: 'CHECK price >= 0']
+  price int [note: 'bruto IVA incl., pesos CLP (entero); CHECK price >= 0']
+  currency varchar [not null, default: 'CLP', note: 'ISO-4217']
   stock int [note: 'CHECK stock >= 0']
   published_year int [note: 'CHECK 1450..2100']
   image_url varchar

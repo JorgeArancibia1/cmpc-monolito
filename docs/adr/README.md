@@ -11,3 +11,4 @@ Registro de las decisiones de arquitectura y su justificación.
 | [0005](0005-validacion-y-errores.md) | Validación por capas y errores claros |
 | [0006](0006-twelve-factor.md) | Metodología Twelve-Factor App |
 | [0007](0007-despliegue.md) | Estrategia de despliegue |
+| [0008](0008-modelo-monetario-iva-redondeo.md) | Modelo monetario, IVA y redondeo |

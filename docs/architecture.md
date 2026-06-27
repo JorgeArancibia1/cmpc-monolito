@@ -50,10 +50,18 @@ sequenceDiagram
   A-->>C: 200 OK
 ```
 
-## Autenticación (JWT con rotación de refresh)
+## Autenticación y seguridad
 
-- **Access token** (15 min) en memoria del cliente → mitiga XSS.
-- **Refresh token** (7 días) en cookie `httpOnly`, con su hash almacenado en la base de datos.
+- **Contraseñas con argon2id** (`@node-rs/argon2`), con *rehash-on-login* de los hashes heredados.
+- **Access token** (15 min) en **memoria** del cliente (no en `localStorage`) → mitiga XSS.
+- **Refresh token** en cookie `httpOnly` + `SameSite`; en producción con prefijo **`__Host-`**
+  (fuerza `Secure` + `Path=/`, impide que un subdominio lo sobreescriba).
+- **Sesiones persistidas** (tabla `sessions`): cada refresh es una fila con `familyId`. La renovación
+  **rota** el token y aplica **detección de reuso** — si llega un refresh ya rotado/revocado (señal de
+  robo) se **revoca toda la familia**. Soporta **múltiples dispositivos**.
+- **CSRF** en `/refresh` mediante *double-submit cookie* (cabecera `X-CSRF-Token`).
+- **Perímetro**: `helmet`, rate limiting (`@nestjs/throttler`), CSP en Nginx, CORS *fail-closed* y
+  `trust proxy` para la IP real tras el proxy.
 - **RBAC**: las operaciones de escritura requieren rol `ADMIN` (`RolesGuard` + `@Roles`).
 
 ## Capas del backend (SOLID)
@@ -74,29 +82,91 @@ input. Los errores técnicos (base de datos, fallos internos) nunca se exponen a
 
 ## Modelo de datos
 
-7 tablas normalizadas a BCNF, con restricciones de integridad (`CHECK`) a nivel de base de datos
+8 tablas normalizadas a BCNF, con restricciones de integridad (`CHECK`) a nivel de base de datos
 y la disponibilidad derivada del stock. Ver [`database.dbml`](database.dbml).
 
 ```mermaid
 erDiagram
+  users ||--o{ sessions : abre
   users ||--o{ audit_logs : registra
   publishers ||--o{ books : edita
   genres ||--o{ books : clasifica
   books ||--o{ book_authors : tiene
   authors ||--o{ book_authors : escribe
+
+  users {
+    uuid id PK
+    string email UK
+    string password_hash
+    string name
+    string role
+    timestamp created_at
+    timestamp updated_at
+    timestamp deleted_at
+  }
+  sessions {
+    uuid id PK
+    uuid user_id FK
+    uuid family_id
+    string token_hash
+    string user_agent
+    string ip
+    timestamp expires_at
+    timestamp revoked_at
+    uuid replaced_by_id
+    timestamp created_at
+  }
+  authors {
+    uuid id PK
+    string name
+    string bio
+    timestamp created_at
+    timestamp updated_at
+    timestamp deleted_at
+  }
+  publishers {
+    uuid id PK
+    string name UK
+    timestamp created_at
+    timestamp updated_at
+    timestamp deleted_at
+  }
+  genres {
+    uuid id PK
+    string name UK
+    timestamp created_at
+    timestamp updated_at
+    timestamp deleted_at
+  }
   books {
     uuid id PK
     string title
     string isbn UK
-    decimal price
+    string description
+    int price
+    string currency
     int stock
+    int published_year
+    string image_url
     uuid publisher_id FK
     uuid genre_id FK
+    timestamp created_at
+    timestamp updated_at
     timestamp deleted_at
   }
   book_authors {
     uuid book_id FK
     uuid author_id FK
+  }
+  audit_logs {
+    uuid id PK
+    string action
+    string entity
+    string entity_id
+    json changes
+    string ip
+    uuid user_id FK
+    timestamp created_at
   }
 ```
 
