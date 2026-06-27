@@ -37,10 +37,10 @@ export function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-slate-100 p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 font-bold text-brand-700">
+          <CardTitle className="flex items-center justify-center gap-2 font-bold text-brand-700">
             <BookOpen className="h-5 w-5" /> CMPC Libros
           </CardTitle>
-          <p className="mt-1 text-sm text-slate-500">Inicia sesión para gestionar el catálogo</p>
+          <p className="mt-1 text-center text-sm text-slate-500">Inicia sesión para gestionar el catálogo</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
