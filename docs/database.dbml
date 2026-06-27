@@ -1,0 +1,93 @@
+// CMPC Libros — Modelo relacional (importar en https://dbdiagram.io)
+// Normalizado a BCNF. Soft delete vía deleted_at. La disponibilidad se deriva del stock.
+
+Table users {
+  id uuid [pk]
+  email varchar [unique, not null]
+  password_hash varchar [not null]
+  name varchar [not null]
+  role varchar [not null, note: 'ADMIN | USER']
+  refresh_hash varchar
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp
+}
+
+Table authors {
+  id uuid [pk]
+  name varchar [not null]
+  bio text
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp
+  Indexes {
+    name
+    deleted_at
+  }
+}
+
+Table publishers {
+  id uuid [pk]
+  name varchar [unique, not null]
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp
+}
+
+Table genres {
+  id uuid [pk]
+  name varchar [unique, not null]
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp
+}
+
+Table books {
+  id uuid [pk]
+  title varchar [not null]
+  isbn varchar [unique]
+  description text
+  price decimal [note: 'CHECK price >= 0']
+  stock int [note: 'CHECK stock >= 0']
+  published_year int [note: 'CHECK 1450..2100']
+  image_url varchar
+  publisher_id uuid [not null, ref: > publishers.id]
+  genre_id uuid [not null, ref: > genres.id]
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp
+  Indexes {
+    title
+    publisher_id
+    genre_id
+    stock
+    deleted_at
+    created_at
+  }
+}
+
+// Tabla puente Libro↔Autor (muchos-a-muchos), clave primaria compuesta.
+Table book_authors {
+  book_id uuid [ref: > books.id]
+  author_id uuid [ref: > authors.id]
+  Indexes {
+    (book_id, author_id) [pk]
+    author_id
+  }
+}
+
+Table audit_logs {
+  id uuid [pk]
+  action varchar [not null, note: 'CREATE | UPDATE | DELETE | RESTORE | LOGIN']
+  entity varchar [not null]
+  entity_id varchar
+  changes json
+  ip varchar
+  user_id uuid [ref: > users.id]
+  created_at timestamp
+  Indexes {
+    (entity, entity_id)
+    user_id
+    created_at
+  }
+}
