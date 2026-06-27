@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+build/
+*.tsbuildinfo
+
+# Env
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Coverage
+coverage/
+
+# Prisma generated client (si se genera dentro de src)
+**/generated/
+
+# Logs
+*.log
+
+# Imágenes subidas en disco local (fallback de dev sin Cloudinary)
+uploads/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json

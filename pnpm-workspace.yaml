@@ -1,0 +1,24 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+allowBuilds:
+  '@prisma/client': true
+  '@prisma/engines': true
+  '@scarf/scarf': false
+  esbuild: true
+  msw: false
+  prisma: true
+
+# Pre-aprobamos los build scripts necesarios (evita el prompt interactivo de pnpm)
+onlyBuiltDependencies:
+  - '@prisma/client'
+  - '@prisma/engines'
+  - prisma
+  - esbuild
+
+# Fuerza versiones parcheadas de dependencias transitivas vulnerables (hallazgos de pnpm audit).
+overrides:
+  multer: '>=2.2.0'
+  'js-yaml@^4.0.0': '>=4.1.2'
+  '@hono/node-server': '>=1.19.13'

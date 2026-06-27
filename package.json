@@ -1,0 +1,26 @@
+{
+  "name": "cmpc-libros",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CMPC — Gestión de Libros (NestJS + React + PostgreSQL)",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "dev:api": "pnpm --filter @cmpc/api dev",
+    "dev:web": "pnpm --filter @cmpc/web dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "test:cov": "pnpm -r test:cov",
+    "db:migrate": "pnpm --filter @cmpc/api db:migrate",
+    "db:seed": "pnpm --filter @cmpc/api db:seed",
+    "db:studio": "pnpm --filter @cmpc/api db:studio",
+    "format": "prettier --write \"{apps,packages}/**/src/**/*.{ts,tsx,json}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2"
+  }
+}
