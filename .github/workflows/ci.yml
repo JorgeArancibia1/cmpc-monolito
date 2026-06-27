@@ -21,6 +21,42 @@ jobs:
       - run: pnpm -r build
       - run: pnpm -r test
 
+  e2e:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: cmpc
+          POSTGRES_PASSWORD: cmpc
+          POSTGRES_DB: cmpc_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U cmpc"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://cmpc:cmpc@localhost:5432/cmpc_e2e?schema=public
+      DIRECT_URL: postgresql://cmpc:cmpc@localhost:5432/cmpc_e2e?schema=public
+      JWT_ACCESS_SECRET: ci-e2e-access-secret-suficientemente-largo-aaaa
+      JWT_REFRESH_SECRET: ci-e2e-refresh-secret-suficientemente-largo-bbbb
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @cmpc/contracts build
+      - run: pnpm --filter @cmpc/api exec prisma migrate deploy
+      - run: pnpm --filter @cmpc/api test:e2e
+
   security:
     runs-on: ubuntu-latest
     steps:
