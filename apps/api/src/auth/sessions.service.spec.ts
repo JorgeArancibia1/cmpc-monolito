@@ -36,4 +36,12 @@ describe('SessionsService', () => {
       data: { revokedAt: expect.any(Date) },
     });
   });
+
+  it('revokeAllForUser revoca todas las sesiones activas del usuario', () => {
+    service.revokeAllForUser('u1');
+    expect(session.updateMany).toHaveBeenCalledWith({
+      where: { userId: 'u1', revokedAt: null },
+      data: { revokedAt: expect.any(Date) },
+    });
+  });
 });

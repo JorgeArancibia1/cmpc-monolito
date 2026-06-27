@@ -30,4 +30,12 @@ export class SessionsService {
       data: { revokedAt: new Date() },
     });
   }
+
+  /** Revoca todas las sesiones activas del usuario (p. ej. tras cambiar la contraseña). */
+  revokeAllForUser(userId: string): Promise<unknown> {
+    return this.prisma.session.updateMany({
+      where: { userId, revokedAt: null },
+      data: { revokedAt: new Date() },
+    });
+  }
 }

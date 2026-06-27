@@ -6,7 +6,7 @@ import { Role, User } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { randomUUID } from 'node:crypto';
 import { UsersService } from '../users/users.service';
-import type { LoginDto, RegisterDto } from './dto/auth.dto';
+import type { ChangePasswordDto, LoginDto, RegisterDto } from './dto/auth.dto';
 import { PasswordService } from './password.service';
 import { SessionsService } from './sessions.service';
 import type { JwtPayload, RefreshPayload } from './strategies/jwt.strategy';
@@ -103,6 +103,19 @@ export class AuthService {
     if (payload?.fid) {
       await this.sessions.revokeFamily(payload.fid);
     }
+  }
+
+  /**
+   * Cambia la contraseña del usuario autenticado. Verifica la actual, guarda la nueva (argon2)
+   * y revoca **todas** sus sesiones por seguridad: debe volver a iniciar sesión en todos lados.
+   */
+  async changePassword(userId: string, dto: ChangePasswordDto): Promise<void> {
+    const user = await this.users.findById(userId);
+    if (!user || !(await this.passwords.verify(user.passwordHash, dto.currentPassword))) {
+      throw new UnauthorizedException('La contraseña actual no es correcta.');
+    }
+    await this.users.updatePasswordHash(user.id, await this.passwords.hash(dto.newPassword));
+    await this.sessions.revokeAllForUser(user.id);
   }
 
   /**

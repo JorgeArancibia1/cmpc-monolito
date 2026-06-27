@@ -46,7 +46,9 @@ describe('AuthService', () => {
   let service: AuthService;
   let users: jest.Mocked<Pick<UsersService, 'findByEmail' | 'findById' | 'create' | 'updatePasswordHash'>>;
   let passwords: jest.Mocked<Pick<PasswordService, 'hash' | 'verify' | 'needsRehash'>>;
-  let sessions: jest.Mocked<Pick<SessionsService, 'findById' | 'create' | 'revoke' | 'revokeFamily'>>;
+  let sessions: jest.Mocked<
+    Pick<SessionsService, 'findById' | 'create' | 'revoke' | 'revokeFamily' | 'revokeAllForUser'>
+  >;
   const jwt = { signAsync: jest.fn() };
   const config = { getOrThrow: jest.fn().mockReturnValue('secret'), get: jest.fn().mockReturnValue('15m') };
 
@@ -67,6 +69,7 @@ describe('AuthService', () => {
       create: jest.fn().mockResolvedValue(makeSession()),
       revoke: jest.fn().mockResolvedValue(undefined),
       revokeFamily: jest.fn().mockResolvedValue(undefined),
+      revokeAllForUser: jest.fn().mockResolvedValue(undefined),
     };
     service = new AuthService(
       users as never,
@@ -146,5 +149,21 @@ describe('AuthService', () => {
   it('logout revoca la familia de la sesión', async () => {
     await service.logout(payload);
     expect(sessions.revokeFamily).toHaveBeenCalledWith('f1');
+  });
+
+  it('changePassword actualiza la clave y revoca todas las sesiones', async () => {
+    await service.changePassword('u1', { currentPassword: 'actual', newPassword: 'NuevaClave123' } as never);
+    expect(passwords.verify).toHaveBeenCalled();
+    expect(users.updatePasswordHash).toHaveBeenCalledWith('u1', '$argon2id$new');
+    expect(sessions.revokeAllForUser).toHaveBeenCalledWith('u1');
+  });
+
+  it('changePassword falla si la contraseña actual es incorrecta', async () => {
+    passwords.verify.mockResolvedValue(false);
+    await expect(
+      service.changePassword('u1', { currentPassword: 'mala', newPassword: 'NuevaClave123' } as never),
+    ).rejects.toThrow(UnauthorizedException);
+    expect(users.updatePasswordHash).not.toHaveBeenCalled();
+    expect(sessions.revokeAllForUser).not.toHaveBeenCalled();
   });
 });

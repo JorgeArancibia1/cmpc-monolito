@@ -3,7 +3,13 @@ import { AuthController } from './auth.controller';
 
 describe('AuthController', () => {
   let controller: AuthController;
-  const auth = { register: jest.fn(), login: jest.fn(), refresh: jest.fn(), logout: jest.fn() };
+  const auth = {
+    register: jest.fn(),
+    login: jest.fn(),
+    refresh: jest.fn(),
+    logout: jest.fn(),
+    changePassword: jest.fn(),
+  };
   const jwt = { verifyAsync: jest.fn() };
   const config = { get: jest.fn().mockReturnValue('development'), getOrThrow: jest.fn().mockReturnValue('secret') };
   const session = { user: { id: 'u1', email: 'a@a.cl', name: 'A', role: 'ADMIN' }, accessToken: 'access', refreshToken: 'refresh' };
@@ -77,6 +83,14 @@ describe('AuthController', () => {
     const req = mockReq({ refresh_token: 'rt' });
     expect(await controller.logout('u1', req as never, res as never)).toEqual({ ok: true });
     expect(auth.logout).toHaveBeenCalled();
+    expect(res.clearCookie).toHaveBeenCalled();
+  });
+
+  it('changePassword delega en el servicio y limpia las cookies', async () => {
+    const res = mockRes();
+    const dto = { currentPassword: 'actual', newPassword: 'NuevaClave123' };
+    expect(await controller.changePassword('u1', dto as never, res as never)).toEqual({ ok: true });
+    expect(auth.changePassword).toHaveBeenCalledWith('u1', dto);
     expect(res.clearCookie).toHaveBeenCalled();
   });
 

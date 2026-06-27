@@ -19,7 +19,7 @@ import { Request, Response } from 'express';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { Public } from '../common/decorators/public.decorator';
 import { AuthService, RequestContext, SessionWithRefresh } from './auth.service';
-import { LoginDto, RegisterDto } from './dto/auth.dto';
+import { ChangePasswordDto, LoginDto, RegisterDto } from './dto/auth.dto';
 import type { RefreshPayload } from './strategies/jwt.strategy';
 
 // En producción el refresh usa el prefijo __Host- (exige Secure + Path=/ + sin Domain),
@@ -107,6 +107,22 @@ export class AuthController {
         // Cookie inválida o vencida: basta con limpiarla.
       }
     }
+    res.clearCookie(this.refreshCookieName, { path: '/' });
+    res.clearCookie(CSRF_COOKIE, { path: '/' });
+    return { ok: true };
+  }
+
+  @ApiBearerAuth()
+  @Post('change-password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Cambiar la contraseña del usuario autenticado' })
+  async changePassword(
+    @CurrentUser('id') userId: string,
+    @Body() dto: ChangePasswordDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    await this.auth.changePassword(userId, dto);
+    // Las sesiones quedaron revocadas: limpiamos las cookies para forzar un nuevo login.
     res.clearCookie(this.refreshCookieName, { path: '/' });
     res.clearCookie(CSRF_COOKIE, { path: '/' });
     return { ok: true };
