@@ -5,8 +5,8 @@ export const loginSchema = z.object({
   password: z.string().min(1, 'Ingresa tu contraseña'),
 });
 
-/** Política de contraseña para cuentas nuevas: largo mínimo + mezcla de tipos. */
-const passwordSchema = z
+/** Política de contraseña: largo mínimo + mezcla de tipos. Reutilizable en back y front. */
+export const passwordSchema = z
   .string()
   .min(10, 'La contraseña debe tener al menos 10 caracteres')
   .max(128, 'La contraseña es demasiado larga')

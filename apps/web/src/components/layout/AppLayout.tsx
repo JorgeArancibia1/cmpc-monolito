@@ -20,9 +20,13 @@ export function AppLayout() {
             </nav>
           </div>
           <div className="flex items-center gap-3 text-sm">
-            <span className="text-slate-600">
+            <Link
+              to="/change-password"
+              className="text-slate-600 hover:text-brand-700"
+              title="Cambiar contraseña"
+            >
               {user?.name} · <span className="text-slate-400">{user?.role}</span>
-            </span>
+            </Link>
             <Button variant="ghost" size="sm" onClick={() => logout()} aria-label="Cerrar sesión">
               <LogOut className="h-4 w-4" /> Salir
             </Button>

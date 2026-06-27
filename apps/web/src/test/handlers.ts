@@ -60,6 +60,7 @@ export const handlers = [
   http.get(`${API}/auth/me`, () => HttpResponse.json({ data: ADMIN })),
   http.post(`${API}/auth/login`, () => HttpResponse.json({ data: { user: ADMIN, accessToken: 'tok' } })),
   http.post(`${API}/auth/logout`, () => HttpResponse.json({ data: { ok: true } })),
+  http.post(`${API}/auth/change-password`, () => HttpResponse.json({ data: { ok: true } })),
 
   http.get(`${API}/authors`, () => HttpResponse.json({ data: authors })),
   http.get(`${API}/publishers`, () => HttpResponse.json({ data: publishers })),

@@ -1,4 +1,4 @@
-import type { AuthUser, LoginInput } from '@cmpc/contracts';
+import type { AuthUser, ChangePasswordInput, LoginInput } from '@cmpc/contracts';
 import { api, setAccessToken } from '@/lib/api';
 
 export async function loginRequest(credentials: LoginInput): Promise<AuthUser> {
@@ -18,4 +18,8 @@ export async function fetchMe(): Promise<AuthUser> {
 export async function logoutRequest(): Promise<void> {
   await api.post('/auth/logout');
   setAccessToken(null);
+}
+
+export async function changePasswordRequest(input: ChangePasswordInput): Promise<void> {
+  await api.post('/auth/change-password', input);
 }
