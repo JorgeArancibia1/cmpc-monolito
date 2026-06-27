@@ -21,6 +21,7 @@
     "format": "prettier --write \"{apps,packages}/**/src/**/*.{ts,tsx,json}\""
   },
   "devDependencies": {
+    "@colbymchenry/codegraph": "^1.1.1",
     "prettier": "^3.4.2"
   }
 }

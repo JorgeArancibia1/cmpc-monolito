@@ -13,6 +13,9 @@ importers:
 
   .:
     devDependencies:
+      '@colbymchenry/codegraph':
+        specifier: ^1.1.1
+        version: 1.1.1
       prettier:
         specifier: ^3.4.2
         version: 3.8.4
@@ -486,6 +489,40 @@ packages:
 
   '@bramus/specificity@2.4.2':
     resolution: {integrity: sha512-ctxtJ/eA+t+6q2++vj5j7FYX3nRu311q1wfYH3xjlLOsczhlhxAg2FWNUXhpGvAw3BWo1xBcvOV6/YLc2r5FJw==}
+    hasBin: true
+
+  '@colbymchenry/codegraph-darwin-arm64@1.1.1':
+    resolution: {integrity: sha512-TzM6UzN5SeS4i6Y7IWrdSAQzITyXwzQpR7weWCT8FqwvaZYkszPQzCzaEIkEwtc9KlZKGYN6Yh4+zOviV2h2dQ==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@colbymchenry/codegraph-darwin-x64@1.1.1':
+    resolution: {integrity: sha512-elCxyBtocaTBnTNPE1D2tX4yu8VopkNDJOW2Q6QnpgISkmKDp46bf6UxL4VY06q9p59YSyst6zLELy/7dDqtMQ==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@colbymchenry/codegraph-linux-arm64@1.1.1':
+    resolution: {integrity: sha512-tcjGyN3pHgGOwTBpLxdtfBeOQxdionm7kX3H3JiUqdFoVml7L1SvukzDOzsCwTNMA/TCGoUFZ0vnqbP1STqaXg==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@colbymchenry/codegraph-linux-x64@1.1.1':
+    resolution: {integrity: sha512-ct0hgOF6szAetPbr47exXPgJot4FntWEe+laQAMwEvC6b97/Qx9ABT3vIXF10n3r45rTzcOzyCL7g1XCE9qWhA==}
+    cpu: [x64]
+    os: [linux]
+
+  '@colbymchenry/codegraph-win32-arm64@1.1.1':
+    resolution: {integrity: sha512-XdHyiYaPcJoPi4anKUO9zEcChqEYRZIdGEA5f7r7In7E1fd64wGh+g335W9eT1Dqkrr3fzjoM0XD9BsKXBK5sQ==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@colbymchenry/codegraph-win32-x64@1.1.1':
+    resolution: {integrity: sha512-VVa0tcC01EC1+0Kef1SEtXiy3ksL51s9FheCIbFh5ambgn97ODmPlIlcB6LoOFflqfSOUV5pIwiHZjD6L3g4Mg==}
+    cpu: [x64]
+    os: [win32]
+
+  '@colbymchenry/codegraph@1.1.1':
+    resolution: {integrity: sha512-SsjouC22lQsegnng+za/qIqwJbYHym3a/B3YCoc7QWa3qTGBoKGZfXrzQ3ysdx7wXL4bWxR18b/B+jscFuZtbA==}
     hasBin: true
 
   '@colors/colors@1.5.0':
@@ -5343,6 +5380,33 @@ snapshots:
   '@bramus/specificity@2.4.2':
     dependencies:
       css-tree: 3.2.1
+
+  '@colbymchenry/codegraph-darwin-arm64@1.1.1':
+    optional: true
+
+  '@colbymchenry/codegraph-darwin-x64@1.1.1':
+    optional: true
+
+  '@colbymchenry/codegraph-linux-arm64@1.1.1':
+    optional: true
+
+  '@colbymchenry/codegraph-linux-x64@1.1.1':
+    optional: true
+
+  '@colbymchenry/codegraph-win32-arm64@1.1.1':
+    optional: true
+
+  '@colbymchenry/codegraph-win32-x64@1.1.1':
+    optional: true
+
+  '@colbymchenry/codegraph@1.1.1':
+    optionalDependencies:
+      '@colbymchenry/codegraph-darwin-arm64': 1.1.1
+      '@colbymchenry/codegraph-darwin-x64': 1.1.1
+      '@colbymchenry/codegraph-linux-arm64': 1.1.1
+      '@colbymchenry/codegraph-linux-x64': 1.1.1
+      '@colbymchenry/codegraph-win32-arm64': 1.1.1
+      '@colbymchenry/codegraph-win32-x64': 1.1.1
 
   '@colors/colors@1.5.0':
     optional: true
