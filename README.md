@@ -142,19 +142,13 @@ pnpm test:cov
 
 ## Documentación
 
-- **Arquitectura del sistema:** [`docs/architecture.png`](docs/architecture.png) (imagen) ·
-  [`docs/architecture.md`](docs/architecture.md) (fuente Mermaid: componentes, secuencia, auth, ER).
-- **Modelo relacional:** [`docs/database-er.png`](docs/database-er.png) (imagen) ·
-  [`docs/database.dbml`](docs/database.dbml) (importable en dbdiagram.io).
-- **Decisiones de arquitectura:** [`docs/adr/`](docs/adr).
-
-### Diagrama de arquitectura
-
-![Arquitectura del sistema](docs/architecture.png)
-
-### Modelo relacional
-
-![Modelo relacional de la base de datos](docs/database-er.png)
+- **Arquitectura del sistema:** [`docs/architecture.md`](docs/architecture.md) — diagramas Mermaid
+  (componentes, secuencia de una petición, autenticación y modelo ER) que GitHub renderiza
+  automáticamente al abrir el archivo.
+- **Modelo relacional:** [`docs/database.dbml`](docs/database.dbml) — esquema en formato DBML,
+  importable en [dbdiagram.io](https://dbdiagram.io).
+- **Decisiones de arquitectura (ADR):** [`docs/adr/`](docs/adr).
+- **API:** Swagger/OpenAPI en `/api/docs` (deshabilitado en producción por seguridad).
 
 ---
 
