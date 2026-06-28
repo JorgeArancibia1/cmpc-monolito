@@ -135,20 +135,34 @@ con mensajes claros para el usuario.
 pnpm test:cov
 ```
 
-- **API:** Jest — cobertura ~95%.
-- **Web:** Vitest + Testing Library + MSW — cobertura ~90%.
+| Paquete | Framework | Tests | Cobertura |
+|---------|-----------|-------|-----------|
+| `apps/api` | Jest (unit + e2e con Postgres real) | 118 | ~95 % |
+| `apps/web` | Vitest + Testing Library + MSW | 45 | ~90 % |
+| `packages/contracts` | Vitest | 32 | 100 % |
+
+Los tests de contratos validan los esquemas Zod compartidos (ISBN, política de contraseña,
+coerción de query params, etc.) — la misma lógica que usan el backend y el frontend.
 
 ---
 
 ## Documentación
 
-- **Arquitectura del sistema:** [`docs/architecture.md`](docs/architecture.md) — diagramas Mermaid
-  (componentes, secuencia de una petición, autenticación y modelo ER) que GitHub renderiza
-  automáticamente al abrir el archivo.
-- **Modelo relacional:** [`docs/database.dbml`](docs/database.dbml) — esquema en formato DBML,
-  importable en [dbdiagram.io](https://dbdiagram.io).
-- **Decisiones de arquitectura (ADR):** [`docs/adr/`](docs/adr).
-- **API:** Swagger/OpenAPI en `/api/docs` (deshabilitado en producción por seguridad).
+### Diagrama de arquitectura
+
+![Arquitectura del sistema](docs/architecture.png)
+
+### Modelo relacional (ER)
+
+![Modelo entidad-relación](docs/database-er.png)
+
+- **Arquitectura detallada:** [`docs/architecture.md`](docs/architecture.md) — diagramas Mermaid
+  (componentes, flujo de petición, autenticación y modelo ER) renderizados automáticamente por GitHub.
+- **Modelo relacional (DBML):** [`docs/database.dbml`](docs/database.dbml) — importable en
+  [dbdiagram.io](https://dbdiagram.io) para exploración interactiva.
+- **Decisiones de arquitectura (ADR):** [`docs/adr/`](docs/adr) — 8 ADRs que documentan las
+  decisiones técnicas clave (monorepo, auth, monetario, despliegue, etc.).
+- **API interactiva:** Swagger/OpenAPI en `/api/docs` (deshabilitado en producción).
 
 ---
 
