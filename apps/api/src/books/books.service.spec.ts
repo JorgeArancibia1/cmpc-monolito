@@ -142,6 +142,14 @@ describe('BooksService', () => {
     expect(csv).toContain("'=SUM(A1)");
   });
 
+  it('página fuera de rango devuelve lista vacía con meta coherente', async () => {
+    repo.findMany.mockResolvedValue([]);
+    repo.count.mockResolvedValue(1);
+    const res = await service.findAll({ page: 99, pageSize: 10, sort: '-createdAt' } as never);
+    expect(res.items).toHaveLength(0);
+    expect(res.meta).toEqual({ page: 99, pageSize: 10, total: 1, totalPages: 1 });
+  });
+
   it('setImageUrl actualiza la imagen', async () => {
     repo.findById.mockResolvedValue(makeBook());
     repo.update.mockResolvedValue(makeBook({ imageUrl: 'http://img' }));

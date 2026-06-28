@@ -70,4 +70,12 @@ describe('AuditInterceptor', () => {
       expect.objectContaining({ action: AuditAction.DELETE, entityId: 'b9', changes: null }),
     );
   });
+
+  it('PATCH registra UPDATE con el entityId del parámetro de ruta y el diff sanitizado', async () => {
+    const next: CallHandler = { handle: () => of({ id: 'b5', title: 'actualizado' }) };
+    await lastValueFrom(interceptor.intercept(ctx('PATCH', '/api/books/b5', { id: 'b5' }), next));
+    expect(audit.record).toHaveBeenCalledWith(
+      expect.objectContaining({ action: AuditAction.UPDATE, entity: 'Book', entityId: 'b5' }),
+    );
+  });
 });
