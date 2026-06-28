@@ -47,8 +47,10 @@ async function bootstrap(): Promise<void> {
   // y termina peticiones en curso al recibir SIGTERM/SIGINT.
   app.enableShutdownHooks();
 
-  // Swagger solo fuera de producción (no exponer la superficie de la API en prod).
-  if (config.get('NODE_ENV') !== 'production') {
+  // Swagger se muestra fuera de producción, o cuando SWAGGER_ENABLED=true (stack local de demo).
+  const swaggerEnabled =
+    config.get('NODE_ENV') !== 'production' || config.get('SWAGGER_ENABLED') === 'true';
+  if (swaggerEnabled) {
     const swaggerConfig = new DocumentBuilder()
       .setTitle('CMPC Libros API')
       .setDescription('API REST para la gestión del catálogo de libros')

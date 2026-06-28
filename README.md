@@ -132,8 +132,11 @@ con mensajes claros para el usuario.
 ## Testing
 
 ```bash
-pnpm test:cov
+pnpm test:cov    # build de contratos + tests de los tres paquetes
 ```
+
+> `@cmpc/web` importa tipos desde el `dist/` del paquete de contratos.
+> El script `test:cov` hace el build automáticamente antes de correr las suites.
 
 | Paquete | Framework | Tests | Cobertura |
 |---------|-----------|-------|-----------|

@@ -39,6 +39,8 @@ services:
       JWT_ACCESS_TTL: 15m
       JWT_REFRESH_TTL: 7d
       CORS_ORIGIN: http://localhost:8082
+      # Habilita Swagger en el stack local aunque NODE_ENV sea production.
+      SWAGGER_ENABLED: 'true'
       CLOUDINARY_CLOUD_NAME: ''
       CLOUDINARY_API_KEY: ''
       CLOUDINARY_API_SECRET: ''

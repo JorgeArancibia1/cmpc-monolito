@@ -12,8 +12,16 @@ import { SessionsService } from './sessions.service';
 import type { JwtPayload, RefreshPayload } from './strategies/jwt.strategy';
 
 const SALT_ROUNDS = 10;
-const REFRESH_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 const EXPIRED = 'Tu sesión expiró. Inicia sesión nuevamente.';
+
+/** Convierte una duración estilo JWT ('7d', '24h', '30m') a milisegundos. */
+function parseTtlMs(ttl: string): number {
+  const match = /^(\d+)([smhd])$/.exec(ttl);
+  if (!match) return 7 * 24 * 60 * 60 * 1000; // default 7d
+  const n = Number(match[1]);
+  const unit: Record<string, number> = { s: 1000, m: 60_000, h: 3_600_000, d: 86_400_000 };
+  return n * unit[match[2]];
+}
 
 export interface SessionWithRefresh extends AuthSession {
   refreshToken: string;
@@ -153,7 +161,7 @@ export class AuthService {
       userId: user.id,
       familyId,
       tokenHash: await bcrypt.hash(refreshToken, SALT_ROUNDS),
-      expiresAt: new Date(Date.now() + REFRESH_TTL_MS),
+      expiresAt: new Date(Date.now() + parseTtlMs(this.config.get('JWT_REFRESH_TTL', '7d'))),
       userAgent: ctx?.userAgent ?? null,
       ip: ctx?.ip ?? null,
     });

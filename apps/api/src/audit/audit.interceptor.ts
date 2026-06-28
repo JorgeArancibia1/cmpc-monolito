@@ -45,6 +45,10 @@ export class AuditInterceptor implements NestInterceptor {
           (req.params?.id as string) ??
           (data && typeof data === 'object' && 'id' in data ? (data as { id: string }).id : null);
 
+        // Fire-and-forget deliberado: la auditoría no debe bloquear ni fallar la operación
+        // de negocio. Los errores se logean como WARN (ver AuditService.record). Para un
+        // sistema de auditoría de alta confiabilidad se utilizaría un outbox transaccional,
+        // lo que está fuera del alcance de este proyecto.
         void this.audit.record({
           action,
           entity,
