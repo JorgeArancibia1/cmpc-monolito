@@ -37,14 +37,16 @@ export class AuditService {
   }
 
   async findAll(page: number, pageSize: number): Promise<PaginatedResult<unknown>> {
-    const [items, total] = await this.prisma.$transaction([
-      this.prisma.auditLog.findMany({
+    // Forma de callback (consultas secuenciales) para no disparar el aviso del driver pg.
+    const { items, total } = await this.prisma.$transaction(async (tx) => {
+      const items = await tx.auditLog.findMany({
         skip: skipOf(page, pageSize),
         take: pageSize,
         orderBy: { createdAt: 'desc' },
-      }),
-      this.prisma.auditLog.count(),
-    ]);
+      });
+      const total = await tx.auditLog.count();
+      return { items, total };
+    });
     return { items, meta: buildMeta(total, page, pageSize) };
   }
 }

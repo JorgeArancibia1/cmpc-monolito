@@ -23,7 +23,11 @@ describe('AuditService', () => {
   });
 
   it('findAll devuelve items y meta', async () => {
-    (prisma as { $transaction: jest.Mock }).$transaction.mockResolvedValue([[{ id: 'l1' }], 1]);
+    (prisma as { $transaction: jest.Mock }).$transaction.mockImplementation(
+      async (cb: (tx: typeof prisma) => unknown) => cb(prisma),
+    );
+    auditLog.findMany.mockResolvedValue([{ id: 'l1' }]);
+    auditLog.count.mockResolvedValue(1);
     const res = await service.findAll(1, 10);
     expect(res.items).toHaveLength(1);
     expect(res.meta.total).toBe(1);
