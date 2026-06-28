@@ -5,6 +5,9 @@
 
 generator client {
   provider = "prisma-client-js"
+  // Habilita la estrategia de carga por JOIN (relationLoadStrategy: 'join'): una sola consulta
+  // por include en vez de varias concurrentes. Más eficiente y evita el warning de pg.
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {

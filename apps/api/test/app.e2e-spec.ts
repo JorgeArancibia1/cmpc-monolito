@@ -45,11 +45,9 @@ describe('CMPC Libros API (e2e)', () => {
         passwordHash: await hash('Admin12345!'),
       },
     });
-    const [publisher, genre, author] = await Promise.all([
-      prisma.publisher.create({ data: { name: 'Planeta' } }),
-      prisma.genre.create({ data: { name: 'Novela' } }),
-      prisma.author.create({ data: { name: 'García Márquez' } }),
-    ]);
+    const publisher = await prisma.publisher.create({ data: { name: 'Planeta' } });
+    const genre = await prisma.genre.create({ data: { name: 'Novela' } });
+    const author = await prisma.author.create({ data: { name: 'García Márquez' } });
     ids.publisher = publisher.id;
     ids.genre = genre.id;
     ids.author = author.id;
