@@ -14,7 +14,6 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { Request, Response } from 'express';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { Public } from '../common/decorators/public.decorator';
@@ -26,7 +25,6 @@ import type { RefreshPayload } from './strategies/jwt.strategy';
 // que impide que un subdominio sobreescriba la cookie. En dev (sin HTTPS) no aplica.
 const REFRESH_COOKIE_DEV = 'refresh_token';
 const REFRESH_COOKIE_PROD = '__Host-refresh_token';
-const CSRF_COOKIE = 'csrf_token';
 const REFRESH_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 
 @ApiTags('auth')
@@ -69,7 +67,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Renovar la sesión' })
   async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    this.assertCsrf(req);
+    this.assertTrustedOrigin(req);
     const token = req.cookies?.[this.refreshCookieName];
     if (!token) {
       throw new UnauthorizedException('Tu sesión expiró. Inicia sesión nuevamente.');
@@ -108,7 +106,6 @@ export class AuthController {
       }
     }
     res.clearCookie(this.refreshCookieName, { path: '/' });
-    res.clearCookie(CSRF_COOKIE, { path: '/' });
     return { ok: true };
   }
 
@@ -124,7 +121,6 @@ export class AuthController {
     await this.auth.changePassword(userId, dto);
     // Las sesiones quedaron revocadas: limpiamos las cookies para forzar un nuevo login.
     res.clearCookie(this.refreshCookieName, { path: '/' });
-    res.clearCookie(CSRF_COOKIE, { path: '/' });
     return { ok: true };
   }
 
@@ -157,35 +153,32 @@ export class AuthController {
   }
 
   /**
-   * Protección CSRF de /refresh (double-submit cookie): el SPA reenvía en la cabecera
-   * X-CSRF-Token el valor de la cookie csrf_token. Un atacante cross-site no puede leer
-   * la cookie ni fijar la cabecera, así que no puede forjar el par.
+   * Protección CSRF compatible con Vercel + Render: el refresh token vive en una cookie
+   * httpOnly y /refresh solo acepta navegadores cuyo Origin esté en CORS_ORIGIN.
+   * Esto evita depender de leer una cookie csrf_token desde otro dominio.
    */
-  private assertCsrf(req: Request): void {
-    const header = req.header('x-csrf-token');
-    const cookie = req.cookies?.[CSRF_COOKIE] as string | undefined;
-    if (!header || !cookie || !this.safeEqual(header, cookie)) {
+  private assertTrustedOrigin(req: Request): void {
+    const origin = req.header('origin');
+    if (!origin) {
+      return;
+    }
+    const allowedOrigins =
+      this.config
+        .get<string>('CORS_ORIGIN')
+        ?.split(',')
+        .map((value) => value.trim())
+        .filter(Boolean) ?? [];
+
+    if (!allowedOrigins.includes(origin)) {
       throw new UnauthorizedException('Tu sesión expiró. Inicia sesión nuevamente.');
     }
   }
 
-  private safeEqual(a: string, b: string): boolean {
-    const ab = Buffer.from(a);
-    const bb = Buffer.from(b);
-    return ab.length === bb.length && timingSafeEqual(ab, bb);
-  }
-
-  /** Guarda el refresh token (httpOnly) y el token CSRF, y devuelve { user, accessToken }. */
+  /** Guarda el refresh token (httpOnly) y devuelve { user, accessToken }. */
   private withSession(session: SessionWithRefresh, res: Response) {
     const base = this.baseCookieOptions();
     res.cookie(this.refreshCookieName, session.refreshToken, {
       httpOnly: true,
-      ...base,
-      maxAge: REFRESH_MAX_AGE,
-    });
-    // Legible por el SPA (httpOnly: false) para poder reenviarlo en la cabecera X-CSRF-Token.
-    res.cookie(CSRF_COOKIE, randomBytes(32).toString('hex'), {
-      httpOnly: false,
       ...base,
       maxAge: REFRESH_MAX_AGE,
     });

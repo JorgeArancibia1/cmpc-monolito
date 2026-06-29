@@ -18,22 +18,12 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-/** Lee el token CSRF (double-submit) que el backend dejó en una cookie legible. */
-function getCsrfToken(): string | null {
-  const match = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]+)/);
-  return match ? decodeURIComponent(match[1]) : null;
-}
-
 export async function refreshSession(): Promise<string | null> {
   try {
-    const csrf = getCsrfToken();
     const { data } = await axios.post<{ data: { accessToken: string } }>(
       `${BASE_URL}/auth/refresh`,
       {},
-      {
-        withCredentials: true,
-        headers: csrf ? { 'X-CSRF-Token': csrf } : undefined,
-      },
+      { withCredentials: true },
     );
     setAccessToken(data.data.accessToken);
     return data.data.accessToken;

@@ -11,13 +11,18 @@ describe('AuthController', () => {
     changePassword: jest.fn(),
   };
   const jwt = { verifyAsync: jest.fn() };
-  const config = { get: jest.fn().mockReturnValue('development'), getOrThrow: jest.fn().mockReturnValue('secret') };
+  const config = {
+    get: jest.fn((key: string) =>
+      key === 'CORS_ORIGIN' ? 'https://cmpclibros.vercel.app' : 'development',
+    ),
+    getOrThrow: jest.fn().mockReturnValue('secret'),
+  };
   const session = { user: { id: 'u1', email: 'a@a.cl', name: 'A', role: 'ADMIN' }, accessToken: 'access', refreshToken: 'refresh' };
   const mockRes = () => ({ cookie: jest.fn(), clearCookie: jest.fn() });
-  const mockReq = (cookies: Record<string, string> = {}, csrfHeader?: string) => ({
+  const mockReq = (cookies: Record<string, string> = {}, origin?: string) => ({
     cookies,
     ip: '127.0.0.1',
-    header: (name: string) => (name.toLowerCase() === 'x-csrf-token' ? csrfHeader : undefined),
+    header: (name: string) => (name.toLowerCase() === 'origin' ? origin : undefined),
   });
 
   beforeEach(() => {
@@ -47,15 +52,15 @@ describe('AuthController', () => {
     expect(out.accessToken).toBe('access');
   });
 
-  it('refresh sin CSRF válido falla', async () => {
-    const req = mockReq({ refresh_token: 'rt', csrf_token: 'c1' }, 'otro');
+  it('refresh desde origin no permitido falla', async () => {
+    const req = mockReq({ refresh_token: 'rt' }, 'https://evil.example');
     await expect(controller.refresh(req as never, mockRes() as never)).rejects.toThrow(
       UnauthorizedException,
     );
   });
 
   it('refresh sin cookie falla', async () => {
-    const req = mockReq({ csrf_token: 'c1' }, 'c1');
+    const req = mockReq({}, 'https://cmpclibros.vercel.app');
     await expect(controller.refresh(req as never, mockRes() as never)).rejects.toThrow(
       UnauthorizedException,
     );
@@ -63,7 +68,7 @@ describe('AuthController', () => {
 
   it('refresh con token inválido falla', async () => {
     jwt.verifyAsync.mockRejectedValue(new Error('bad'));
-    const req = mockReq({ refresh_token: 'rt', csrf_token: 'c1' }, 'c1');
+    const req = mockReq({ refresh_token: 'rt' }, 'https://cmpclibros.vercel.app');
     await expect(controller.refresh(req as never, mockRes() as never)).rejects.toThrow(
       UnauthorizedException,
     );
@@ -72,7 +77,7 @@ describe('AuthController', () => {
   it('refresh válido renueva', async () => {
     jwt.verifyAsync.mockResolvedValue({ sub: 'u1', sid: 's1', fid: 'f1' });
     auth.refresh.mockResolvedValue(session);
-    const req = mockReq({ refresh_token: 'rt', csrf_token: 'c1' }, 'c1');
+    const req = mockReq({ refresh_token: 'rt' }, 'https://cmpclibros.vercel.app');
     const out = await controller.refresh(req as never, mockRes() as never);
     expect(out.accessToken).toBe('access');
   });
