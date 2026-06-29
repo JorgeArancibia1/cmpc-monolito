@@ -132,17 +132,17 @@ con mensajes claros para el usuario.
 ## Testing
 
 ```bash
-pnpm test:cov    # build de contratos + tests de los tres paquetes
+pnpm test:cov
 ```
 
-> `@cmpc/web` importa tipos desde el `dist/` del paquete de contratos.
-> El script `test:cov` hace el build automáticamente antes de correr las suites.
+Corre cobertura en los tres paquetes del monorepo. El script hace `build` de `@cmpc/contracts`
+automáticamente antes de las suites, ya que `apps/web` importa desde su `dist/`.
 
 | Paquete | Framework | Tests | Cobertura |
 |---------|-----------|-------|-----------|
 | `apps/api` | Jest (unit + e2e con Postgres real) | 118 | ~95 % |
 | `apps/web` | Vitest + Testing Library + MSW | 45 | ~90 % |
-| `packages/contracts` | Vitest | 32 | 100 % |
+| `packages/contracts` | Vitest + coverage-v8 | 32 | ~100 % |
 
 Los tests de contratos validan los esquemas Zod compartidos (ISBN, política de contraseña,
 coerción de query params, etc.) — la misma lógica que usan el backend y el frontend.

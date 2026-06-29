@@ -15,6 +15,9 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     css: true,
+    // La instrumentación de cobertura ralentiza el runtime significativamente.
+    // 20s por test es suficiente para el peor caso sin alargar el feedback loop en exceso.
+    testTimeout: 20000,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html'],

@@ -13,17 +13,21 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts --clean",
     "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
     "test": "vitest run",
+    "test:cov": "vitest run --coverage",
     "prepare": "tsup src/index.ts --format esm,cjs --dts --clean"
   },
   "dependencies": {
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.9",
     "tsup": "^8.3.5",
     "typescript": "^5.9.3",
     "vitest": "^4.1.9"
