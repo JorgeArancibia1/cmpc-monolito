@@ -1,6 +1,7 @@
 import axios, { AxiosError, type AxiosRequestConfig } from 'axios';
 
-const BASE_URL = `${import.meta.env.VITE_API_URL ?? 'http://localhost:3002'}/api`;
+const API_ORIGIN = import.meta.env.VITE_API_URL?.replace(/\/$/, '') ?? '';
+const BASE_URL = `${API_ORIGIN}/api`;
 
 /** Token de acceso en memoria (no en localStorage → mitiga XSS). */
 let accessToken: string | null = null;

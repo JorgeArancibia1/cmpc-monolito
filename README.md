@@ -111,7 +111,7 @@ Ver `.env.example`. Principales:
 | `JWT_ACCESS_TTL` / `JWT_REFRESH_TTL` | Vigencia de los tokens |
 | `CORS_ORIGIN` | Origen permitido del frontend |
 | `CLOUDINARY_*` | Credenciales para la carga de imágenes (opcional) |
-| `VITE_API_URL` | URL de la API que consume el frontend |
+| `VITE_API_URL` | URL de la API en desarrollo local. En Vercel no se define: la app usa `/api` y `vercel.json` proxyea a Render. |
 
 ---
 
@@ -192,7 +192,7 @@ coerción de query params, etc.) — la misma lógica que usan el backend y el f
 
 ## Despliegue
 
-- **Frontend → Vercel** (SPA estática; `apps/web/vercel.json` configura el rewrite).
+- **Frontend → Vercel** (SPA estática; `apps/web/vercel.json` proxyea `/api/*` a Render y deja el resto al router de la SPA).
 - **Backend → Render** (Docker; `render.yaml`). Health check en `/api/health`.
 - **Base de datos → PostgreSQL gestionado** (p. ej. Neon): `DATABASE_URL` (pooled) y `DIRECT_URL` (directa).
 - **Imágenes → Cloudinary**.
