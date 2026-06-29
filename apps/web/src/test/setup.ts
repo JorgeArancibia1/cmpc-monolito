@@ -19,3 +19,4 @@ afterAll(() => server.close());
 window.confirm = vi.fn(() => true);
 URL.createObjectURL = vi.fn(() => 'blob:mock');
 URL.revokeObjectURL = vi.fn();
+HTMLAnchorElement.prototype.click = vi.fn();

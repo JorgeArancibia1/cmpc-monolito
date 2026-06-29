@@ -140,7 +140,7 @@ automáticamente antes de las suites, ya que `apps/web` importa desde su `dist/`
 
 | Paquete | Framework | Tests | Cobertura |
 |---------|-----------|-------|-----------|
-| `apps/api` | Jest (unit + e2e con Postgres real) | 118 | ~95 % |
+| `apps/api` | Jest (unit + e2e con Postgres real) | 108 | ~95 % |
 | `apps/web` | Vitest + Testing Library + MSW | 45 | ~90 % |
 | `packages/contracts` | Vitest + coverage-v8 | 32 | ~100 % |
 
