@@ -37,7 +37,7 @@ El administrador puede crear, editar, eliminar y ver la auditoría. El usuario s
 | **Backend** | NestJS 11 · TypeScript · Prisma 7 (driver adapter) · Passport-JWT · nestjs-zod · Swagger |
 | **Base de datos** | PostgreSQL |
 | **Contratos** | Paquete compartido `@cmpc/contracts` (esquemas Zod + tipos) usado por ambos lados |
-| **Testing** | Jest (API) · Vitest + Testing Library + MSW (web) — cobertura ≥ 80% |
+| **Testing** | Jest (API) · Vitest + Testing Library + MSW (web) — coverage ≥ 80% |
 | **Infraestructura** | Docker multi-stage · Docker Compose · Nginx · pnpm workspaces |
 
 ## Estructura
@@ -121,7 +121,7 @@ Ver `.env.example`. Principales:
 |---------|--------|
 | `pnpm dev` | API + frontend en paralelo |
 | `pnpm build` | Compila todo el monorepo |
-| `pnpm test` / `pnpm test:cov` | Tests (con cobertura) |
+| `pnpm test` / `pnpm test:cov` | Tests (con coverage) |
 | `pnpm db:migrate` / `db:seed` / `db:studio` | Tareas de base de datos |
 
 ---
@@ -156,7 +156,7 @@ con mensajes claros para el usuario.
 pnpm test:cov
 ```
 
-Corre cobertura en los tres paquetes del monorepo. El script hace `build` de `@cmpc/contracts`
+Corre coverage en los tres paquetes del monorepo. El script hace `build` de `@cmpc/contracts`
 automáticamente antes de las suites, ya que `apps/web` importa desde su `dist/`.
 
 | Paquete | Framework | Tests | Cobertura |
@@ -184,8 +184,9 @@ coerción de query params, etc.) — la misma lógica que usan el backend y el f
   (componentes, flujo de petición, autenticación y modelo ER) renderizados automáticamente por GitHub.
 - **Modelo relacional (DBML):** [`docs/database.dbml`](docs/database.dbml) — importable en
   [dbdiagram.io](https://dbdiagram.io) para exploración interactiva.
-- **Decisiones de arquitectura (ADR):** [`docs/adr/`](docs/adr) — 8 ADRs que documentan las
-  decisiones técnicas clave (monorepo, auth, monetario, despliegue, etc.).
+- **Decisiones de arquitectura (ADR):** para más información sobre las decisiones del proyecto,
+  revisar [`docs/adr/`](docs/adr) — 8 ADRs que documentan las decisiones técnicas clave
+  (monorepo, auth, monetario, despliegue, etc.).
 - **API interactiva:** Swagger/OpenAPI en `/api/docs` (deshabilitado en producción).
 
 ---
@@ -196,6 +197,12 @@ coerción de query params, etc.) — la misma lógica que usan el backend y el f
 - **Backend → Render** (Docker; `render.yaml`). Health check en `/api/health`.
 - **Base de datos → PostgreSQL gestionado** (p. ej. Neon): `DATABASE_URL` (pooled) y `DIRECT_URL` (directa).
 - **Imágenes → Cloudinary**.
+
+En producción, el frontend consume la API mediante el proxy `/api/*` configurado en
+`apps/web/vercel.json`, que reenvía las peticiones a Render. Esto evita depender de cookies de
+terceros entre `vercel.app` y `onrender.com` y permite mantener el refresh token en una cookie
+`httpOnly`. Por eso `VITE_API_URL` se usa solo en desarrollo local; en Vercel debe omitirse para
+que la app consuma `/api`.
 
 El proyecto sigue la metodología **Twelve-Factor App**: configuración por entorno, procesos sin
 estado, backing services conectables, logs como flujo de eventos, apagado elegante y separación
