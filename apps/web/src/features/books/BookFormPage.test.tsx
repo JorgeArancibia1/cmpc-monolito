@@ -7,6 +7,12 @@ import { IDS } from '@/test/handlers';
 import { server } from '@/test/server';
 import { renderWithProviders } from '@/test/utils';
 import { BookFormPage } from './BookFormPage';
+import { useBook } from './hooks';
+
+function CachedBookDetail() {
+  const { data: book } = useBook('b1');
+  return book?.imageUrl ? <img src={book.imageUrl} alt="Portada actualizada" /> : <div>Sin imagen</div>;
+}
 
 const createUi = (
   <Routes>
@@ -18,7 +24,7 @@ const createUi = (
 const editUi = (
   <Routes>
     <Route path="/books/:id/edit" element={<BookFormPage />} />
-    <Route path="/books/:id" element={<div>Detalle simulado</div>} />
+    <Route path="/books/:id" element={<CachedBookDetail />} />
   </Routes>
 );
 
@@ -78,6 +84,6 @@ describe('BookFormPage', () => {
     const file = new File(['img'], 'portada.png', { type: 'image/png' });
     await user.upload(screen.getByLabelText('Imagen (opcional)') as HTMLInputElement, file);
     await user.click(screen.getByRole('button', { name: /guardar/i }));
-    expect(await screen.findByText('Detalle simulado')).toBeInTheDocument();
+    expect(await screen.findByAltText('Portada actualizada')).toBeInTheDocument();
   });
 });

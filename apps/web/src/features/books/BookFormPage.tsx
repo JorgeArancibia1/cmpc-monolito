@@ -1,5 +1,6 @@
 import { bookFormSchema, type BookFormInput } from '@cmpc/contracts';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import type { z } from 'zod';
@@ -24,6 +25,7 @@ export function BookFormPage() {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { authors, publishers, genres } = useCatalogs();
   const bookQuery = useBook(id);
   const createMut = useCreateBook();
@@ -78,7 +80,9 @@ export function BookFormPage() {
     // El libro ya se guardó: si la imagen falla, no se debe perder ese resultado.
     if (file) {
       try {
-        await uploadBookImage(saved.id, file);
+        saved = await uploadBookImage(saved.id, file);
+        queryClient.setQueryData(['book', saved.id], saved);
+        await queryClient.invalidateQueries({ queryKey: ['books'] });
       } catch {
         toast.warning('El libro se guardó, pero no se pudo subir la imagen. Inténtalo de nuevo al editarlo.');
         navigate(`/books/${saved.id}`);
