@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/AuthContext';
 
 export function AppLayout() {
-  const { user, logout } = useAuth();
+  const { user, isAdmin, logout } = useAuth();
 
   return (
     <div className="min-h-screen">
@@ -16,7 +16,7 @@ export function AppLayout() {
             </Link>
             <nav className="flex items-center gap-4 text-sm text-slate-600">
               <Link to="/books" className="hover:text-brand-700">Catálogo</Link>
-              <Link to="/dashboard" className="hover:text-brand-700">Analítica</Link>
+              {isAdmin && <Link to="/dashboard" className="hover:text-brand-700">Analítica</Link>}
             </nav>
           </div>
           <div className="flex items-center gap-3 text-sm">

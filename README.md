@@ -25,7 +25,7 @@ Construida como **monorepo** con tipos y validaciones compartidas entre el backe
 | Administrador | `admin@cmpc.cl` | `Admin123!` |
 | Usuario | `usuario@cmpc.cl` | `User123!` |
 
-El administrador puede crear, editar, eliminar y ver la auditoría. El usuario solo consulta.
+El administrador puede crear, editar, eliminar y ver el panel de analítica. El usuario solo consulta.
 
 ---
 

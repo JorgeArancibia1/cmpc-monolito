@@ -1,3 +1,5 @@
+import { Role } from '@prisma/client';
+import { ROLES_KEY } from '../common/decorators/roles.decorator';
 import { AnalyticsController } from './analytics.controller';
 import { AnalyticsService } from './analytics.service';
 
@@ -59,6 +61,10 @@ describe('AnalyticsService', () => {
 });
 
 describe('AnalyticsController', () => {
+  it('queda restringido a administradores', () => {
+    expect(Reflect.getMetadata(ROLES_KEY, AnalyticsController)).toEqual([Role.ADMIN]);
+  });
+
   it('delega en el servicio', () => {
     const service = { summary: jest.fn().mockReturnValue('ok') };
     const controller = new AnalyticsController(service as never);

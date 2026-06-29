@@ -41,4 +41,15 @@ describe('App (rutas)', () => {
     renderWithProviders(<App />, { route: '/books/new' });
     expect(await screen.findByText('Catálogo de libros')).toBeInTheDocument();
   });
+
+  it('un usuario no-admin no ve ni entra al panel de analítica', async () => {
+    server.use(
+      http.get(`${API}/auth/me`, () =>
+        HttpResponse.json({ data: { id: 'u2', email: 'usuario@cmpc.cl', name: 'Usuario', role: 'USER' } }),
+      ),
+    );
+    renderWithProviders(<App />, { route: '/dashboard' });
+    expect(await screen.findByText('Catálogo de libros')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Analítica' })).not.toBeInTheDocument();
+  });
 });

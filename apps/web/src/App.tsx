@@ -15,11 +15,11 @@ export function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
-          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/change-password" element={<ChangePasswordPage />} />
           <Route path="/books" element={<BooksListPage />} />
           <Route path="/books/:id" element={<BookDetailPage />} />
           <Route element={<AdminRoute />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/books/new" element={<BookFormPage />} />
             <Route path="/books/:id/edit" element={<BookFormPage />} />
           </Route>
