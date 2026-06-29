@@ -35,7 +35,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (status >= 500) {
       this.logger.error(
         `${request.method} ${request.url} -> ${status}`,
-        exception instanceof Error ? exception.stack : String(exception),
+        this.errorDetails(exception),
       );
     }
 
@@ -142,5 +142,22 @@ export class AllExceptionsFilter implements ExceptionFilter {
       409: 'CONFLICTO',
     };
     return map[status] ?? 'ERROR';
+  }
+
+  private errorDetails(exception: unknown): string {
+    if (exception instanceof Error) {
+      const details = {
+        name: exception.name,
+        message: exception.message,
+        stack: exception.stack,
+        cause: exception.cause,
+      };
+      return JSON.stringify(details);
+    }
+    try {
+      return JSON.stringify(exception);
+    } catch {
+      return String(exception);
+    }
   }
 }
