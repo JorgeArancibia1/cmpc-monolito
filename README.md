@@ -18,11 +18,11 @@ Construida como **monorepo** con tipos y validaciones compartidas entre el backe
 > El backend corre en Render (plan gratuito). Si lleva más de 15 minutos inactivo entra en
 > reposo y el primer request puede tardar ~30 s en responder.
 
-### Cuentas de acceso
+### Credenciales de producción (https://cmpclibros.vercel.app/)
 
 | Rol | Correo | Contraseña |
 |-----|--------|-----------|
-| Administrador | `admin@cmpc.cl` | `Test1234!!` |
+| Administrador | `admin@cmpc.cl` | `Admin123!` |
 | Usuario | `usuario@cmpc.cl` | `User123!` |
 
 El administrador puede crear, editar, eliminar y ver la auditoría. El usuario solo consulta.
@@ -70,7 +70,7 @@ docker compose up --build
 
 Las migraciones y los datos de ejemplo se cargan automáticamente al iniciar.
 
-### Cuentas de ejemplo (stack local)
+### Credenciales de ambiente local (http://localhost:8082)
 
 | Rol | Correo | Contraseña |
 |-----|--------|-----------|
