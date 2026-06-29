@@ -8,6 +8,27 @@ Construida como **monorepo** con tipos y validaciones compartidas entre el backe
 
 ---
 
+## Demo en producción
+
+| | URL |
+|---|---|
+| **Aplicación** | https://cmpclibros.vercel.app/ |
+| **API (health)** | https://cmpc-libros-api.onrender.com/api/health |
+
+> El backend corre en Render (plan gratuito). Si lleva más de 15 minutos inactivo entra en
+> reposo y el primer request puede tardar ~30 s en responder.
+
+### Cuentas de acceso
+
+| Rol | Correo | Contraseña |
+|-----|--------|-----------|
+| Administrador | `admin@cmpc.cl` | `Test1234!!` |
+| Usuario | `usuario@cmpc.cl` | `User123!` |
+
+El administrador puede crear, editar, eliminar y ver la auditoría. El usuario solo consulta.
+
+---
+
 ## Stack
 
 | Capa | Tecnologías |
@@ -49,7 +70,7 @@ docker compose up --build
 
 Las migraciones y los datos de ejemplo se cargan automáticamente al iniciar.
 
-### Cuentas de ejemplo
+### Cuentas de ejemplo (stack local)
 
 | Rol | Correo | Contraseña |
 |-----|--------|-----------|
